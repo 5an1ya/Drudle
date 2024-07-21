@@ -4,15 +4,15 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { isAuthenticated } from './authCheck';
 
-const withAuth = (WrappedComponent: React.ComponentType) => {
-  const AuthComponent: React.FC = (props) => {
+const withAuth = (WrappedComponent) => {
+  const AuthComponent = (props) => {
     const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
 
     useEffect(() => {
       const checkAuth = async () => {
         const authenticated = await isAuthenticated();
-        if (!authenticated) { //If user is not auth send to landing page
+        if (!authenticated) { // If user is not authenticated, send to landing page
           router.replace('/landing');
         } else {
           setIsLoading(false);
