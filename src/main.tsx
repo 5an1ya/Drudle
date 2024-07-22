@@ -17,6 +17,29 @@ import Dashboard from './pages/dashboard.jsx';
 
 Amplify.configure(outputs);
 
+const App: React.FC = () => {
+  const [appId, setAppId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAppId = async () => {
+      try {
+        const id = await getAppId('LandingPage'); // Use the component name
+        setAppId(id);
+      } catch (error) {
+        console.error('Error fetching app ID:', error);
+      }
+    };
+
+    fetchAppId();
+  }, []);
+
+  if (!appId) {
+    return <div>Loading...</div>;
+  }
+
+  return <LandingPage appId={appId} />;
+};
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Router>
