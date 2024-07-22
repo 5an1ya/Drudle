@@ -1,5 +1,0 @@
-{
-    "AppSyncApiName": "drudle",
-    "S3DeploymentBucket": "amplify-drudle-dev-fad45-deployment",
-    "S3DeploymentRootKey": "amplify-appsync-files/2d99397f531468016764b4180ee1c1f6d0143dc9"
-}
