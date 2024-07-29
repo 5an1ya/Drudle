@@ -1,10 +1,9 @@
-/* 
- * Initializes pages and 
- * Persist layout between page changes
- * Keep state when navigating pages.
- * Inject additional data into pages
- * Add global CSS
- */
+/*Initializes pages and 
+  *Persist layout between page changes
+  *Keep state when navigating pages.
+  *Inject additional data into pages
+  *Add global CSS
+*/
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -16,23 +15,16 @@ import LogInPage from './pages/logInPage.jsx';
 import outputs from '../amplify_outputs.json';
 import Dashboard from './pages/dashboard.jsx';
 
-// Configure Amplify with outputs
 Amplify.configure(outputs);
 
-// Main application component
-const App = () => {
-  return (
-    <React.StrictMode>
-      <Router>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LogInPage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
-      </Router>
-    </React.StrictMode>
-  );
-};
-
-// Render the application to the root element
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LogInPage />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </Router>
+  </React.StrictMode>
+);
