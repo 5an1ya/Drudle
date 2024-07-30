@@ -9,7 +9,6 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Amplify } from 'aws-amplify';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-
 import LandingPage from './pages/landingPage.jsx';
 import LogInPage from './pages/logInPage.jsx';
 import outputs from '../amplify_outputs.json';

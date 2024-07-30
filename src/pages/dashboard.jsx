@@ -1,12 +1,14 @@
 import React from 'react';
 import { View } from '@aws-amplify/ui-react';
+import SignOutButton from '../components/signOutButton';
 
 const Dashboard = () => {
   return (
     <View>
-      <Text>
+      <h1>
         It works!
-      </Text>
+      </h1>
+      <SignOutButton />
     </View>
   );
 };

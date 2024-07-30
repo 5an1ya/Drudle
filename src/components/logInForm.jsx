@@ -1,30 +1,43 @@
 import React, { useState } from 'react';
 import { TextField, Button, Alert } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
+import { signIn } from 'aws-amplify/auth';
 import { useNavigate } from 'react-router-dom';
-import { isAuthenticated } from '/amplify/auth/authCheck';
 
 const LogInForm = ({ onForgotPassword, onCreateAccount }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
-      const authenticated = await isAuthenticated();
-      if (authenticated) {
-        navigate('/dashboard'); // Navigate to dashboard if authenticated
-      } else {
-        setErrorMessage('Login failed. Please check your credentials and try again.');
-      }
+      await signIn({
+        username: email, 
+        password: password
+      });
+      navigate('/dashboard'); // Navigate to dashboard if authenticated
     } catch (error) {
-      setErrorMessage('An error occurred. Please try again later.');
+      console.error('Login error:', error);
+      setErrorMessage('Login failed. Please check your credentials and try again.');
     }
   };
 
   return (
     <div>
-      <TextField placeholder="Email" marginBottom="10px" />
-      <TextField placeholder="Password" type="password" marginBottom="10px" />
+      <TextField
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        marginBottom="10px"
+      />
+      <TextField
+        placeholder="Password"
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        marginBottom="10px"
+      />
       {errorMessage && (
         <Alert variation="error" marginBottom="10px">
           {errorMessage}
