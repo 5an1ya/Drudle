@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@aws-amplify/ui-react';
 import { generateClient } from 'aws-amplify/data';
-import outputs from '../../amplify_outputs.json';
+import config from '../assets/aws-exports';;
 import { Amplify } from 'aws-amplify';
 
 /**
  * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
  */
 
-Amplify.configure(outputs);
+Amplify.configure(config);
 
 const client = generateClient({
     authMode: 'apiKey',
