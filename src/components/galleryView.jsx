@@ -22,7 +22,9 @@ const GalleryView = () => {
   useEffect(() => {
     const fetchPlants = async () => {
       try {
-        const { data: plantData, errors } = await client.models.Plant.list();
+        const { data: plantData, errors } = await client.models.Plant.list({
+          authMode: 'apiKey',
+        });
         console.log(plantData, errors); // Inspect the returned data
         if (errors) {
           console.error("Error fetching plants:", errors);
