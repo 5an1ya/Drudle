@@ -6,4 +6,3 @@ export const auth = defineAuth({
     email: true, // Enable login with email
   },
 });
-
