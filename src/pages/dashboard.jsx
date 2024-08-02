@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { View } from '@aws-amplify/ui-react';
 import SignOutButton from '../components/signOutButton';
 import GalleryView from '../components/galleryView';
-import AddPlant from '../components/addPlantButton';
+import Logo from '../components/logo'
 
 const Dashboard = () => {
   const [plants, setPlants] = useState([]);
@@ -16,8 +16,15 @@ const Dashboard = () => {
 
   return (
     <View>
-      <GalleryView plants={plants} />
-      <AddPlant />
+
+      <View display="flex" justifyContent="space-between" padding="10px">
+        <Logo />
+      </View>
+
+      <View display="flex" padding="10px">
+        <GalleryView plants={plants} />
+      </View>
+
       <SignOutButton />
     </View>
   );
