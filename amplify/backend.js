@@ -6,7 +6,7 @@ import { auth } from './auth/resource';
  * Define the backend resources.
  * @see https://docs.amplify.aws/react/build-a-backend/ for adding storage, functions, and more
  */
-defineBackend({
+const backend = defineBackend({
   auth,
   // data,
 });
