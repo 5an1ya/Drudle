@@ -6,7 +6,6 @@ import {
   View,
   Flex,
   Text,
-  Button,
   useTheme,
 } from '@aws-amplify/ui-react';
 import { generateClient } from 'aws-amplify/data';

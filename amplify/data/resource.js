@@ -1,4 +1,4 @@
-import { defineData, schema as a, defineSchema } from "@aws-amplify/backend";
+import { defineData, defineSchema } from "@aws-amplify/backend";
 
 /*== STEP 1 ===============================================================
 The section below creates database tables with fields. 
