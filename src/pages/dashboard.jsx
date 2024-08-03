@@ -19,13 +19,14 @@ const Dashboard = () => {
 
       <View display="flex" justifyContent="space-between" padding="10px">
         <Logo />
+        <SignOutButton />
       </View>
 
       <View display="flex" padding="10px">
         <GalleryView plants={plants} />
       </View>
 
-      <SignOutButton />
+      
     </View>
   );
 };
