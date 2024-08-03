@@ -1,4 +1,4 @@
-import { a, defineData, ClientSchema } from '@aws-amplify/backend';
+import { defineData, schema as a, defineSchema } from "@aws-amplify/backend";
 
 /*== STEP 1 ===============================================================
 The section below creates database tables with fields. 
@@ -34,8 +34,6 @@ const schema = defineSchema({
     .key(a.key({ name: "byReminderId", fields: ["reminderId"] }))
     .key(a.key({ name: "byPlantId", fields: ["plantId"] })),
 });
-
-export const Schema = ClientSchema;
 
 export const data = defineData({
   schema,
