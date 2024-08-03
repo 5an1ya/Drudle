@@ -2,8 +2,8 @@ import { a, defineData } from '@aws-amplify/backend';
 
 const schema = a.schema({
   Plant: a.model({
-    plantId: a.id().isRequired(),
-    plantNickname: a.string().isRequired(),
+    plantId: a.id(),
+    plantNickname: a.string(),
     scientificName: a.string(),
     birthdate: a.date(),
     tasks: a.array(a.string()),
