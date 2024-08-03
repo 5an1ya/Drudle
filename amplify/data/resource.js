@@ -6,7 +6,7 @@ const schema = a.schema({
     plantNickname: a.string(),
     scientificName: a.string(),
     birthdate: a.date(),
-    tasks: a.array(a.string()),
+    tasks: a.stringList(),
     plantPhoto: a.string(), // URL or file path for the photo
   })
   .authorization((allow) => [allow.publicApiKey()])
