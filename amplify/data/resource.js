@@ -15,10 +15,10 @@ const schema = a.schema({
   .key(a.key({ name: "byPlantId", fields: ["plantId"] })),
 
   Reminder: a.model({
-    reminderId: a.id().isRequired(),
-    reminder: a.string().isRequired(),
-    plantId: a.id().isRequired(),
-    dueDate: a.date().isRequired(),
+    reminderId: a.id(),
+    reminder: a.string(),
+    plantId: a.id(),
+    dueDate: a.date(),
     reminderType: a.enum(["WATER", "FERTILIZE", "PRUNE", "OTHER"]),
   })
   .authorization((allow) => [allow.publicApiKey()])
