@@ -10,14 +10,13 @@ import {
 } from '@aws-amplify/ui-react';
 import { generateClient } from 'aws-amplify/data';
 import config from '../assets/aws-exports';
+import outputs from '../../amplify_outputs.json'
 import { Amplify } from 'aws-amplify';
 import AddPlantButton from './addPlantButton';
 
-/**
- * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
- */
+Amplify.configure(outputs);
 
-Amplify.configure(config);
+const client = generateClient(config);
 
 // Define the theme for Placeholder
 const placeholderTheme = {
@@ -36,10 +35,6 @@ const placeholderTheme = {
     },
   },
 };
-
-const client = generateClient({
-  authMode: 'apiKey',
-});
 
 const GalleryView = () => {
   const [plants, setPlants] = useState([]);
