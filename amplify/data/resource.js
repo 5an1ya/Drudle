@@ -1,11 +1,11 @@
-import { defineData, defineSchema } from "@aws-amplify/backend";
+import { a, defineData } from "@aws-amplify/backend";
 
 /*== STEP 1 ===============================================================
 The section below creates database tables with fields. 
 The authorization rule below specifies that any user authenticated via an 
 API key can "create", "read", "update", and "delete" any "Todo" records.
 =========================================================================*/
-const schema = defineSchema({
+const schema = a.schema({
   Plant: a
     .model({
       plantId: a.id().isRequired(),
