@@ -1,4 +1,4 @@
-import { a, defineData } from '@aws-amplify/backend';
+import { a, defineData, type ClientSchema } from '@aws-amplify/backend';
 
 const schema = a.schema({
   Plant: a.model({
@@ -9,10 +9,7 @@ const schema = a.schema({
     tasks: a.string(),
     plantPhoto: a.string(), // URL or file path for the photo
   })
-  .authorization((allow) => [allow.publicApiKey()])
-  .syncable(true)
-  .pluralName("Plants")
-  .key(a.key({ name: "byPlantId", fields: ["plantId"] })),
+  .authorization((allow) => [allow.publicApiKey()]),
 
   Reminder: a.model({
     reminderId: a.id(),
@@ -22,18 +19,16 @@ const schema = a.schema({
     reminderType: a.enum(["WATER", "FERTILIZE", "PRUNE", "OTHER"]),
   })
   .authorization((allow) => [allow.publicApiKey()])
-  .syncable(true)
-  .pluralName("Reminders")
-  .key(a.key({ name: "byReminderId", fields: ["reminderId"] }))
-  .key(a.key({ name: "byPlantId", fields: ["plantId"] })),
 });
 
+// Used for code completion / highlighting when making requests from frontend
+export type Schema = ClientSchema<typeof schema>;
+
+// Defines the data resource to be deployed
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: "apiKey",
-    apiKeyAuthorizationMode: {
-      expiresInDays: 30,
-    },
-  },
+    defaultAuthorizationMode: 'apiKey',
+    apiKeyAuthorizationMode: { expiresInDays: 30 }
+  }
 });
