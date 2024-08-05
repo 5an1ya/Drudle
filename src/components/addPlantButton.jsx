@@ -1,12 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@aws-amplify/ui-react';
+import AddPlantModal from './addPlantModal.tsx'; // Adjust import path as needed
 
-const AddPlant = () => {
+const AddPlantButton = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="add-plant">
-      <Button>Add Plant</Button>
+      <Button onClick={handleOpenModal}>Add Plant</Button>
+      <AddPlantModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 };
 
-export default AddPlant;
+export default AddPlantButton;
