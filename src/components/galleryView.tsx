@@ -1,34 +1,16 @@
-import React, { FC, useState, useEffect } from 'react';
-import { Amplify } from 'aws-amplify';
+import React, { FC, useState, useEffect, ChangeEvent } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
+import { Card, Text, Button, View } from '@aws-amplify/ui-react';
 import { generateClient } from 'aws-amplify/data';
-import outputs from '../../amplify_outputs.json';
 import type { Schema } from '../../amplify/data/resource';
-import { Placeholder, ThemeProvider, Card, View, Flex, Text, useTheme } from '@aws-amplify/ui-react';
-import AddPlantButton from './addPlantButton';
+import SearchBar from './searchBar';
+import SortButton from './sortButton';
 import { StorageImage } from '@aws-amplify/ui-react-storage';
-
-Amplify.configure(outputs);
+import AddPlantButton from './addPlantButton';
 
 const client = generateClient<Schema>({
   authMode: 'apiKey',
 });
-
-const placeholderTheme = {
-  name: 'placeholder-theme',
-  tokens: {
-    components: {
-      placeholder: {
-        transitionDuration: { value: '1250ms' },
-        startColor: { value: '{colors.neutral.40}' },
-        endColor: { value: '{colors.neutral.60}' },
-        borderRadius: { value: '{radii.large}' },
-        large: {
-          height: { value: '{space.xxxl}' },
-        },
-      },
-    },
-  },
-};
 
 interface Plant {
   plantId: string;
@@ -36,7 +18,7 @@ interface Plant {
   scientificName: string;
   birthdate: string;
   plantPhoto: string;
-  reminders: Reminder[];
+  reminders?: Reminder[]; // Make reminders optional
 }
 
 interface Reminder {
@@ -44,11 +26,17 @@ interface Reminder {
   reminder: string;
   dueDate: string;
   reminderType: 'WATER' | 'FERTILIZE' | 'PRUNE' | 'OTHER';
+  plantId: string;
 }
 
 const GalleryView: FC = () => {
   const [plants, setPlants] = useState<Plant[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [sortOption, setSortOption] = useState<string>('name');
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const itemsPerPage = 3;
+  const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
     const fetchPlants = async () => {
@@ -59,12 +47,7 @@ const GalleryView: FC = () => {
         if (errors) {
           console.error('Error fetching plants:', errors);
         } else if (Array.isArray(data)) {
-          const transformedPlants = data.map(item => ({
-            ...item,
-            reminders: [] // Set reminders to an empty array if not fetched
-          })) as Plant[];
-
-          setPlants(transformedPlants);
+          setPlants(data as Plant[]);
         } else {
           console.error('Unexpected data structure:', data);
         }
@@ -78,46 +61,74 @@ const GalleryView: FC = () => {
     fetchPlants();
   }, []);
 
+  const filteredPlants = plants
+    .filter(plant =>
+      plant.plantNickname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      plant.scientificName.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (sortOption === 'name') {
+        return a.plantNickname.localeCompare(b.plantNickname);
+      } else if (sortOption === 'age') {
+        return calculateAge(a.birthdate) - calculateAge(b.birthdate);
+      }
+      return 0;
+    });
+
+  const visiblePlants = filteredPlants.slice(currentIndex, currentIndex + itemsPerPage);
+
   if (loading) {
-    return (
-      <ThemeProvider theme={placeholderTheme} colorMode="light">
-        <div style={{ textAlign: 'center' }}>
-          <h2>Loading...</h2>
-          <Placeholder size="large" />
-        </div>
-      </ThemeProvider>
-    );
+    return <Text>Loading...</Text>;
   }
 
   if (plants.length === 0) {
-    return <NoPlantsPlaceholder />;
+    return <Text>No plants available.</Text>;
   }
 
+  const navigateToPlantPage = (plantId: string) => {
+    navigate(`/plant/${plantId}`); // Use navigate to go to plant page
+  };
+
   return (
-    <div className="gallery-view">
-      <div className="plant-gallery">
-        {plants.map((plant) => (
-          <div key={plant.plantId} className="plant-card">
+    <View style={{ padding: '10px', margin: '0 auto' }}>
+      <View display="flex" style={{ marginBottom: '10px', justifyContent: 'space-between' }}>
+        <View display="flex">
+          <SearchBar searchQuery={searchQuery} onSearchChange={(e: ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)} />
+          <SortButton sortOption={sortOption} onSortChange={(e: ChangeEvent<HTMLSelectElement>) => setSortOption(e.target.value)} />
+        </View>
+        <AddPlantButton />
+      </View>
+
+      <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Button onClick={() => setCurrentIndex(Math.max(currentIndex - itemsPerPage, 0))} disabled={currentIndex === 0}>
+          &lt;
+        </Button>
+        {visiblePlants.map((plant) => (
+          <Card
+            key={plant.plantId}
+            onClick={() => navigateToPlantPage(plant.plantId)} // Navigate on click
+            style={{ width: '350px', margin: '10px', cursor: 'pointer' }}
+          >
             <StorageImage
               alt={`Photo of ${plant.plantNickname}`}
               path={plant.plantPhoto}
-              onError={(error) => console.error(`Error loading image for ${plant.plantNickname}:`, error)}
-              style={{ width: '200px', height: 'auto' }}
+              style={{ width: '100%', height: '250px', objectFit: 'cover' }}
             />
-            <h3>{plant.plantNickname}</h3>
-            <p>Scientific Name: {plant.scientificName}</p>
-            <p>Age: {calculateAge(plant.birthdate)}</p>
-            <p>Next Reminder: {getSoonestReminder(plant.reminders)}</p>
-          </div>
+            <Text fontWeight="bold">{plant.plantNickname}</Text>
+            <Text>Scientific Name: {plant.scientificName}</Text>
+            <Text>Age: {calculateAge(plant.birthdate)}</Text>
+          </Card>
         ))}
-        <AddPlantButton />
-      </div>
-    </div>
+        <Button onClick={() => setCurrentIndex(Math.min(currentIndex + itemsPerPage, filteredPlants.length - itemsPerPage))} disabled={currentIndex + itemsPerPage >= filteredPlants.length}>
+          &gt;
+        </Button>
+      </View>
+    </View>
   );
 };
 
-const calculateAge = (birthdate: string): string => {
-  if (!birthdate) return 'Unknown';
+const calculateAge = (birthdate: string): number => {
+  if (!birthdate) return 0;
   const birthDate = new Date(birthdate);
   const today = new Date();
   let age = today.getFullYear() - birthDate.getFullYear();
@@ -125,35 +136,7 @@ const calculateAge = (birthdate: string): string => {
   if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
     age--;
   }
-  return age.toString();
-};
-
-const getSoonestReminder = (reminders: Reminder[]): string => {
-  if (!reminders || reminders.length === 0) return 'No reminders set';
-  const sortedReminders = reminders.sort(
-    (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
-  );
-  return new Date(sortedReminders[0].dueDate).toLocaleDateString();
-};
-
-const NoPlantsPlaceholder: FC = () => {
-  const { tokens } = useTheme();
-  return (
-    <View
-      backgroundColor={tokens.colors.background.secondary}
-      padding={tokens.space.medium}
-      textAlign="center"
-      width="75rem"
-    >
-      <Card>
-        <Flex direction="column" alignItems="center">
-          <Text as="h2">You do not have any plants in your greenhouse.</Text>
-          <Text as="p">Add plants by clicking the button below!</Text>
-          <AddPlantButton />
-        </Flex>
-      </Card>
-    </View>
-  );
+  return age;
 };
 
 export default GalleryView;
