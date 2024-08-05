@@ -1,5 +1,7 @@
 import React from "react";
 import { View, Text, Button, Flex, Icon, Image } from "@aws-amplify/ui-react";
+import { signOut } from "aws-amplify";
+import { useNavigate } from "react-router-dom";
 import "@aws-amplify/ui-react/styles.css";
 
 // Mock data for plant details and reminders
@@ -12,6 +14,25 @@ const plantDetails = {
     { type: "Fertilize", icon: "🌿", notes: "Bi-weekly" },
     { type: "Other", icon: "🔔", notes: "Rotate pot weekly" },
   ],
+};
+
+const SignOutButton = () => {
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      navigate("/"); // Redirect to login page after sign-out
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
+  return (
+    <Button variation="link" onClick={handleSignOut}>
+      Sign Out
+    </Button>
+  );
 };
 
 const PlantPage = () => {
@@ -28,9 +49,7 @@ const PlantPage = () => {
   return (
     <View padding="20px" maxWidth="800px" margin="auto">
       <Flex justifyContent="flex-end" marginBottom="20px">
-        <Button variation="link" onClick={() => alert("Sign Out")}>
-          Sign Out
-        </Button>
+        <SignOutButton />
       </Flex>
 
       <Flex
@@ -45,7 +64,7 @@ const PlantPage = () => {
           width="250px"
           height="350px"
           objectFit="cover"
-          style={{ marginTop: "120px" }} // Adjust margin to move the image down
+          style={{ marginTop: "20px" }} // Adjust margin to move the image down
         />
         <Flex direction="column" justifyContent="space-between" flex="1">
           <View>
