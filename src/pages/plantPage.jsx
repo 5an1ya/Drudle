@@ -19,9 +19,18 @@ const initialPlants = [
   // Add more plants here as needed
 ];
 
+/**
+ * PlantPage component displays a list of plants with options to add, edit, and delete reminders.
+ * @component
+ * @returns {JSX.Element} Rendered PlantPage component
+ */
 const PlantPage = () => {
   const [plants, setPlants] = useState(initialPlants);
 
+  /**
+   * Deletes a plant from the list by its ID.
+   * @param {number} plantId - The ID of the plant to be deleted.
+   */
   const handleDeletePlant = (plantId) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this plant?"
@@ -29,6 +38,63 @@ const PlantPage = () => {
     if (confirmed) {
       // Filter out the plant to be deleted
       const updatedPlants = plants.filter((plant) => plant.id !== plantId);
+      setPlants(updatedPlants);
+    }
+  };
+
+  /**
+   * Adds a new reminder to the plant's list of reminders.
+   * Prompts the user for reminder details.
+   * @param {number} plantId - The ID of the plant to which the reminder will be added.
+   */
+  const handleAddReminder = (plantId) => {
+    const reminderType = prompt("Enter reminder type (e.g., Water):");
+    const reminderNotes = prompt("Enter reminder notes (e.g., Every 3 days):");
+    const reminderIcon = prompt("Enter reminder icon (e.g., 💧):");
+
+    if (reminderType && reminderNotes && reminderIcon) {
+      const updatedPlants = plants.map((plant) => {
+        if (plant.id === plantId) {
+          return {
+            ...plant,
+            reminders: [
+              ...plant.reminders,
+              { type: reminderType, icon: reminderIcon, notes: reminderNotes },
+            ],
+          };
+        }
+        return plant;
+      });
+
+      setPlants(updatedPlants);
+    }
+  };
+
+  /**
+   * Edits an existing reminder for a plant.
+   * Prompts the user to enter new reminder details.
+   * @param {number} plantId - The ID of the plant whose reminder is being edited.
+   * @param {number} reminderIndex - The index of the reminder to be edited.
+   */
+  const handleEditReminder = (plantId, reminderIndex) => {
+    const reminderType = prompt("Enter new reminder type:");
+    const reminderNotes = prompt("Enter new reminder notes:");
+    const reminderIcon = prompt("Enter new reminder icon:");
+
+    if (reminderType && reminderNotes && reminderIcon) {
+      const updatedPlants = plants.map((plant) => {
+        if (plant.id === plantId) {
+          const updatedReminders = [...plant.reminders];
+          updatedReminders[reminderIndex] = {
+            type: reminderType,
+            icon: reminderIcon,
+            notes: reminderNotes,
+          };
+          return { ...plant, reminders: updatedReminders };
+        }
+        return plant;
+      });
+
       setPlants(updatedPlants);
     }
   };
@@ -53,7 +119,7 @@ const PlantPage = () => {
             width="250px"
             height="350px"
             objectFit="cover"
-            style={{ marginTop: "20px" }}
+            style={{ marginTop: "155px" }}
           />
           <Flex direction="column" justifyContent="space-between" flex="1">
             <View>
@@ -82,6 +148,12 @@ const PlantPage = () => {
                     <Text fontSize="1.2em">{reminder.type}</Text>
                   </Flex>
                   <Text fontSize="1em">{reminder.notes}</Text>
+                  <Button
+                    variation="link"
+                    onClick={() => handleEditReminder(plant.id, index)}
+                  >
+                    Edit
+                  </Button>
                 </Flex>
               ))}
             </Flex>
@@ -94,16 +166,9 @@ const PlantPage = () => {
               <Button
                 variation="primary"
                 size="large"
-                onClick={() => alert("Add Task")}
+                onClick={() => handleAddReminder(plant.id)}
               >
-                Add Task
-              </Button>
-              <Button
-                variation="primary"
-                size="large"
-                onClick={() => alert("Edit Reminders")}
-              >
-                Edit Reminders
+                Add Reminder
               </Button>
               <Button
                 variation="destructive"
